@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Clock, LayoutDashboard, Calendar, LogOut, Menu, X } from "lucide-react";
+import { Clock, LayoutDashboard, Calendar, LogOut, Menu, X, User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DashboardLayoutProps {
@@ -12,6 +12,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [userRole, setUserRole] = useState<string>('employee');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -50,6 +51,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       if (error) throw error;
       setProfile(data);
+
+      // Fetch user role
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
+
+      if (roleData) {
+        setUserRole(roleData.role);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
@@ -60,10 +72,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     navigate('/auth');
   };
 
-  const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Calendar, label: 'History', path: '/history' },
-  ];
+  const navItems = userRole === 'manager' 
+    ? [
+        { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+        { icon: Users, label: 'Team Attendance', path: '/team' },
+        { icon: User, label: 'Profile', path: '/profile' },
+      ]
+    : [
+        { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+        { icon: Calendar, label: 'History', path: '/history' },
+        { icon: User, label: 'Profile', path: '/profile' },
+      ];
 
   return (
     <div className="min-h-screen bg-background">
