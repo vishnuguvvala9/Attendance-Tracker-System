@@ -37,8 +37,7 @@ const TeamAttendance = () => {
             department
           )
         `)
-        .order('date', { ascending: false })
-        .limit(100);
+        .order('date', { ascending: false });
 
       if (error) throw error;
       setAttendance(data || []);
