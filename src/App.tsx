@@ -10,7 +10,6 @@ import AttendanceHistory from "./pages/AttendanceHistory";
 import TeamAttendance from "./pages/TeamAttendance";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-import { AIChatbot } from "./components/AIChatbot";
 
 const queryClient = new QueryClient();
 
@@ -31,7 +30,6 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
-      <AIChatbot />
     </TooltipProvider>
   </QueryClientProvider>
 );
